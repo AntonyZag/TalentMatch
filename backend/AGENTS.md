@@ -10,8 +10,7 @@ La base inicial expone `GET /health` y configura CORS. La conexión a PostgreSQL
 
 Ejecuta estos comandos desde `backend/` para que la configuración encuentre el `.env` local.
 
-- `uv run backend` inicia Uvicorn con recarga en `0.0.0.0:8001`.
-- `uv run uvicorn backend.main:app --reload --port 8001` inicia el mismo servidor de forma explícita. Usa la cadena de importación para que funcione la recarga.
+- `uv run python -m uvicorn backend.main:app --reload --port 8001` inicia el servidor de desarrollo con recarga en `http://127.0.0.1:8001`. Usa este comando en Windows si Control de aplicaciones bloquea el lanzador `uvicorn.exe` con el error 4551.
 - `uv run pytest` ejecuta la suite. `pytest` y `httpx` ya están declarados como dependencias de desarrollo. La prueba de `/health` usa `fastapi.testclient.TestClient`.
 - Usa `uv run` para ejecutar comandos de Python en el entorno del proyecto. Cuando corresponda actualizar dependencias, usa `uv add` para sincronizar `pyproject.toml` y `uv.lock`.
 

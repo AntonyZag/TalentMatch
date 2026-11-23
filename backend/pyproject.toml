@@ -8,8 +8,12 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "bcrypt>=5.0.0",
     "fastapi>=0.163.2",
+    "httpx>=0.28.1",
+    "psycopg[binary,pool]>=3.2,<4",
     "pydantic-settings>=2.16.3",
+    "pyjwt>=2.15.1",
     "uvicorn>=0.54.0",
 ]
 
@@ -22,6 +26,5 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "httpx>=0.28.1",
     "pytest>=9.2.0",
 ]
