@@ -4,7 +4,7 @@ import logging
 from functools import lru_cache
 from typing import Annotated
 
-from pydantic import field_validator
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 logger = logging.getLogger(__name__)
@@ -21,6 +21,16 @@ class Settings(BaseSettings):
     # CORS_ORIGINS=http://localhost:4200,http://127.0.0.1:4200
     # Empty by default: no cross-origin request is allowed unless configured.
     cors_origins: Annotated[list[str], NoDecode] = []
+    database_url: SecretStr | None = None
+    apisperu_base_url: str = "https://dniruc.apisperu.com/api/v1"
+    apisperu_token: SecretStr | None = None
+    jwt_secret: SecretStr | None = None
+    jwt_expire_minutes: int = Field(default=120, gt=0)
+
+    @field_validator("database_url", "apisperu_token", "jwt_secret", mode="before")
+    @classmethod
+    def empty_secret(cls, value: object) -> object:
+        return None if isinstance(value, str) and not value.strip() else value
 
     @field_validator("cors_origins", mode="before")
     @classmethod
@@ -42,7 +52,6 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """Return the cached settings instance.
 
-    `.env` is resolved relative to the current working directory, so run
-    commands from the repository root.
+    Run commands from backend/ so the working directory resolves its .env.
     """
     return Settings()
