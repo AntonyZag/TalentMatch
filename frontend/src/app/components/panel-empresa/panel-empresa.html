@@ -1,0 +1,593 @@
+<!-- Sección: cabecera y menú de la empresa -->
+<header class="page-head top-line">
+  <div>
+    <h1>Panel de empresa</h1>
+    @if (empresa(); as e) {
+      <p>{{ e.nombreComercial || e.razonSocial }}</p>
+    }
+  </div>
+  @if (vista() === 'vacantes' && empresa()) {
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="ocupado()"
+      (click)="abrirFormulario()"
+    >
+      <i class="bi bi-plus-lg" aria-hidden="true"></i> Publicar vacante
+    </button>
+  }
+</header>
+@if (cargando()) {
+  <p class="panel" role="status">Cargando tu panel…</p>
+}
+@if (empresa()) {
+  <nav aria-label="Secciones de empresa" class="section-tabs">
+    <!-- Opción: Mis vacantes -->
+    <button
+      type="button"
+      [attr.aria-current]="vista() !== 'perfil' ? 'page' : null"
+      [disabled]="ocupado()"
+      (click)="ir('vacantes')"
+    >
+      Mis vacantes
+    </button>
+    <!-- Opción: Perfil de empresa -->
+    <button
+      type="button"
+      [attr.aria-current]="vista() === 'perfil' ? 'page' : null"
+      [disabled]="ocupado()"
+      (click)="ir('perfil')"
+    >
+      Perfil de empresa
+    </button>
+  </nav>
+}
+@if (error()) {
+  <div class="alert alert-danger" role="alert">
+    {{ error() }}
+    @if (!empresa()) {
+      <button type="button" class="btn btn-link" (click)="iniciar()">Reintentar</button>
+    }
+  </div>
+}
+@if (aviso()) {
+  <div class="alert alert-success" role="status">{{ aviso() }}</div>
+}
+@if (ocupado()) {
+  <p role="status" class="working">Actualizando…</p>
+}
+@if (catalogos(); as c) {
+  @switch (vista()) {
+    @case ('vacantes') {
+      <!-- Sección: vacantes propias -->
+      @if (propias(); as p) {
+        <div class="top-line subhead">
+          <h2>Mis vacantes</h2>
+          <span>{{ p.total }} en total</span>
+        </div>
+        <div class="card-list">
+          @for (v of p.items; track v.id) {
+            <article class="panel hiring-card">
+              <div class="top-line">
+                <span class="icon-box"><i class="bi bi-briefcase" aria-hidden="true"></i></span
+                ><span class="tag">{{ v.estado }}</span>
+              </div>
+              <h3>{{ v.titulo }}</h3>
+              <p>
+                {{ nombre(c.modalidades, v.modalidadId) }} · {{ v.cupos }}
+                {{ v.cupos === 1 ? 'cupo' : 'cupos' }} · Cierre
+                {{ v.fechaCierre | date: 'dd/MM/yyyy' : 'UTC' }}
+              </p>
+              <div class="actions">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  [disabled]="ocupado()"
+                  (click)="verPostulantes(v)"
+                >
+                  Ver postulantes
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  [disabled]="ocupado()"
+                  (click)="abrirFormulario(v)"
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  [disabled]="ocupado()"
+                  (click)="abrirEstadoVacante(v)"
+                >
+                  Cambiar estado
+                </button>
+              </div>
+              @if (estadoEnEdicion() === v.id) {
+                <form class="inline-editor" (ngSubmit)="guardarEstadoVacante(v.id)">
+                  <label
+                    >Nuevo estado<select class="form-select" name="estado" [(ngModel)]="estadoId">
+                      @for (e of c.estadosVacante; track e.id) {
+                        <option [ngValue]="e.id">{{ e.nombre }}</option>
+                      }
+                    </select></label
+                  >
+                  <div class="actions">
+                    <button
+                      class="btn btn-primary"
+                      [disabled]="ocupado() || estadoId === v.estadoId"
+                    >
+                      Guardar estado
+                    </button>
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      [disabled]="ocupado()"
+                      (click)="estadoEnEdicion.set(null)"
+                    >
+                      Volver
+                    </button>
+                  </div>
+                </form>
+              }
+            </article>
+          } @empty {
+            <p class="panel">
+              Todavía no has publicado vacantes. Usa «Publicar vacante» para crear la primera.
+            </p>
+          }
+        </div>
+        @if (p.total > p.tamano || p.pagina > 1) {
+          <nav class="actions pager" aria-label="Páginas de mis vacantes">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              [disabled]="ocupado() || p.pagina === 1"
+              (click)="paginaVacantes(p.pagina - 1)"
+            >
+              Anterior
+            </button>
+            <span>Página {{ p.pagina }}</span
+            ><button
+              type="button"
+              class="btn btn-outline-secondary"
+              [disabled]="ocupado() || p.pagina * p.tamano >= p.total"
+              (click)="paginaVacantes(p.pagina + 1)"
+            >
+              Siguiente
+            </button>
+          </nav>
+        }
+      }
+    }
+    @case ('perfil') {
+      <!-- Sección: perfil de la empresa -->
+      @if (empresa(); as e) {
+        <section class="panel form-panel">
+          <h2>Perfil de empresa</h2>
+          <dl class="facts">
+            <div>
+              <dt>Razón social</dt>
+              <dd>{{ e.razonSocial }}</dd>
+            </div>
+            <div>
+              <dt>RUC</dt>
+              <dd>{{ e.ruc }}</dd>
+            </div>
+            <div>
+              <dt>Dirección registrada</dt>
+              <dd>{{ e.direccion || 'Sin dirección registrada' }}</dd>
+            </div>
+            <div>
+              <dt>Estado SUNAT</dt>
+              <dd>{{ e.estadoSunat || 'Sin información' }}</dd>
+            </div>
+          </dl>
+          @if (perfil; as f) {
+            <form ngNativeValidate class="fields" (ngSubmit)="guardarPerfil()">
+              <label
+                >Nombre comercial<input
+                  class="form-control"
+                  name="nombreComercial"
+                  [(ngModel)]="f.nombreComercial"
+                  maxlength="160"
+              /></label>
+              <label
+                >Sector<select class="form-select" name="sector" [(ngModel)]="f.sectorId" required>
+                  @for (s of c.sectores; track s.id) {
+                    <option [ngValue]="s.id">{{ s.nombre }}</option>
+                  }
+                </select></label
+              >
+              <label
+                >Teléfono<input
+                  class="form-control"
+                  type="tel"
+                  name="telefono"
+                  [(ngModel)]="f.telefono"
+                  maxlength="25"
+              /></label>
+              <label
+                >Sitio web<input
+                  class="form-control"
+                  type="url"
+                  name="web"
+                  [(ngModel)]="f.web"
+                  pattern="https?://.+"
+                  placeholder="https://"
+              /></label>
+              <label class="full"
+                >Descripción de la empresa<textarea
+                  class="form-control"
+                  rows="4"
+                  name="descripcion"
+                  [(ngModel)]="f.descripcion"
+                ></textarea>
+              </label>
+              <div class="full actions">
+                <button class="btn btn-primary" [disabled]="ocupado()">Guardar perfil</button>
+              </div>
+            </form>
+          }
+        </section>
+      }
+    }
+    @case ('formulario') {
+      <!-- Sección: datos y requisitos de la vacante -->
+      <section class="panel form-panel">
+        <h2>{{ seleccionada() ? 'Editar vacante' : 'Publicar vacante' }}</h2>
+        <form ngNativeValidate class="fields" (ngSubmit)="guardarVacante()">
+          <label class="full"
+            >Título del puesto<input
+              required
+              maxlength="160"
+              name="titulo"
+              class="form-control"
+              [(ngModel)]="vacante.titulo"
+          /></label>
+          <label
+            >Tipo de vacante<select
+              required
+              name="tipo"
+              class="form-select"
+              [(ngModel)]="vacante.tipoId"
+            >
+              <option [ngValue]="null" disabled>Selecciona el tipo</option>
+              @for (s of c.tiposVacante; track s.id) {
+                <option [ngValue]="s.id">{{ s.nombre }}</option>
+              }
+            </select></label
+          >
+          <label
+            >Modalidad<select
+              required
+              name="modalidad"
+              class="form-select"
+              [(ngModel)]="vacante.modalidadId"
+            >
+              <option [ngValue]="null" disabled>Selecciona la modalidad</option>
+              @for (s of c.modalidades; track s.id) {
+                <option [ngValue]="s.id">{{ s.nombre }}</option>
+              }
+            </select></label
+          >
+          <label class="full"
+            >Descripción<textarea
+              required
+              name="descripcion"
+              rows="4"
+              class="form-control"
+              [(ngModel)]="vacante.descripcion"
+            ></textarea>
+          </label>
+          <label
+            >Carrera<select name="carrera" class="form-select" [(ngModel)]="vacante.carreraId">
+              <option [ngValue]="null">Todas las carreras</option>
+              @for (s of c.carreras; track s.id) {
+                <option [ngValue]="s.id">{{ s.nombre }}</option>
+              }
+            </select></label
+          >
+          <label
+            >Ubicación (opcional)<input
+              maxlength="160"
+              name="ubicacion"
+              class="form-control"
+              [(ngModel)]="vacante.ubicacion"
+          /></label>
+          <label
+            >Cupos disponibles<input
+              type="number"
+              required
+              step="1"
+              min="0"
+              max="32767"
+              name="cupos"
+              class="form-control"
+              [(ngModel)]="vacante.cupos"
+          /></label>
+          <label
+            >Sueldo en soles (opcional)<input
+              type="number"
+              min="0"
+              max="99999999.99"
+              step="0.01"
+              name="sueldo"
+              class="form-control"
+              [(ngModel)]="vacante.sueldo"
+          /></label>
+          <label
+            >Fecha de cierre<input
+              required
+              type="date"
+              name="cierre"
+              class="form-control"
+              [(ngModel)]="vacante.fechaCierre"
+          /></label>
+          <fieldset class="full requirements">
+            <legend>Habilidades requeridas</legend>
+            <div class="fields">
+              <label
+                >Habilidad<select name="habilidad" class="form-select" [(ngModel)]="habilidadId">
+                  <option [ngValue]="null">Selecciona una habilidad</option>
+                  @for (h of c.habilidades; track h.id) {
+                    <option [ngValue]="h.id">{{ h.nombre }}</option>
+                  }
+                </select></label
+              >
+              <label
+                >Nivel mínimo<select name="nivel" class="form-select" [(ngModel)]="nivelMinId">
+                  <option [ngValue]="null">Selecciona un nivel</option>
+                  @for (n of c.niveles; track n.id) {
+                    <option [ngValue]="n.id">{{ n.nombre }}</option>
+                  }
+                </select></label
+              >
+            </div>
+            <div class="actions skill-actions">
+              <label class="check"
+                ><input type="checkbox" name="obligatoria" [(ngModel)]="obligatoria" />
+                Obligatoria</label
+              >
+              <button class="btn btn-outline-secondary" type="button" (click)="agregarRequisito()">
+                Añadir habilidad
+              </button>
+            </div>
+            @if (vacante.habilidades.length) {
+              <ul class="skill-list">
+                @for (h of vacante.habilidades; track h.habilidadId) {
+                  <li>
+                    <span
+                      >{{ nombre(c.habilidades, h.habilidadId) }} ·
+                      {{ nombre(c.niveles, h.nivelMinId) }} ·
+                      {{ h.obligatoria ? 'Obligatoria' : 'Deseable' }}</span
+                    >
+                    <button
+                      class="quiet"
+                      type="button"
+                      (click)="quitarRequisito(h.habilidadId)"
+                      [attr.aria-label]="'Quitar ' + nombre(c.habilidades, h.habilidadId)"
+                    >
+                      Quitar
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </fieldset>
+          <div class="actions full">
+            <button type="submit" class="btn btn-primary" [disabled]="ocupado()">
+              {{ seleccionada() ? 'Guardar cambios' : 'Publicar vacante' }}
+            </button>
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              [disabled]="ocupado()"
+              (click)="ir('vacantes')"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </section>
+    }
+    @case ('postulantes') {
+      <!-- Sección: revisión de postulantes y proyectos -->
+      @if (seleccionada(); as v) {
+        <button
+          class="quiet back-link"
+          type="button"
+          [disabled]="ocupado()"
+          (click)="ir('vacantes')"
+        >
+          Volver a mis vacantes
+        </button>
+        <div class="subhead">
+          <h2>Postulantes</h2>
+          <p>
+            {{ v.titulo }} · {{ v.cupos }}
+            {{ v.cupos === 1 ? 'cupo disponible' : 'cupos disponibles' }}
+          </p>
+        </div>
+        @if (candidaturas(); as p) {
+          @if (p.total) {
+            <p class="sort-order">
+              <i class="bi bi-sort-down" aria-hidden="true"></i> Mayor compatibilidad primero
+            </p>
+          }
+          <div class="card-list">
+            @for (persona of p.items; track persona.id) {
+              <article class="panel hiring-card">
+                <div class="top-line">
+                  <div>
+                    <h3>
+                      {{ persona.nombres }} {{ persona.apellidoPat }} {{ persona.apellidoMat }}
+                    </h3>
+                    <span class="tag">{{ persona.estado }}</span>
+                  </div>
+                  <div class="match">
+                    <strong>{{ persona.matchPct | number: '1.0-2' }} %</strong
+                    ><span>de compatibilidad</span>
+                  </div>
+                </div>
+                <div class="actions">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    [attr.aria-expanded]="candidaturaAbierta() === persona.id"
+                    (click)="
+                      candidaturaAbierta.set(
+                        candidaturaAbierta() === persona.id ? null : persona.id
+                      )
+                    "
+                  >
+                    {{
+                      candidaturaAbierta() === persona.id ? 'Ocultar portafolio' : 'Ver portafolio'
+                    }}
+                  </button>
+                  @if (persona.estado !== 'Aceptada') {
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      [disabled]="ocupado()"
+                      (click)="abrirEstadoPostulacion(persona)"
+                    >
+                      Cambiar estado
+                    </button>
+                  }
+                </div>
+                @if (candidaturaAbierta() === persona.id) {
+                  <section class="candidate-detail">
+                    @if (persona.mensaje) {
+                      <h4>Mensaje del estudiante</h4>
+                      <p>{{ persona.mensaje }}</p>
+                    }
+                    <h4>Habilidades</h4>
+                    <ul class="pills">
+                      @for (h of persona.habilidades; track h.habilidadId) {
+                        <li>
+                          {{ nombre(c.habilidades, h.habilidadId) }} ·
+                          {{ nombre(c.niveles, h.nivelId) }}
+                        </li>
+                      } @empty {
+                        <li>Sin habilidades registradas</li>
+                      }
+                    </ul>
+                    <h4>Proyectos</h4>
+                    @for (proyecto of persona.proyectos; track proyecto.id) {
+                      <div class="project">
+                        <h5>{{ proyecto.titulo }}</h5>
+                        @if (proyecto.id === persona.proyectoId) {
+                          <small>Proyecto adjunto a la postulación</small>
+                        }
+                        <p>{{ proyecto.descripcion }}</p>
+                        @if (proyecto.habilidadIds.length) {
+                          <ul class="pills">
+                            @for (id of proyecto.habilidadIds; track id) {
+                              <li>{{ nombre(c.habilidades, id) }}</li>
+                            }
+                          </ul>
+                        }
+                        <div class="actions">
+                          @if (proyecto.repoUrl) {
+                            <a [href]="proyecto.repoUrl" target="_blank" rel="noopener noreferrer"
+                              >Repositorio
+                              <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i
+                            ></a>
+                          }
+                          @if (proyecto.demoUrl) {
+                            <a [href]="proyecto.demoUrl" target="_blank" rel="noopener noreferrer"
+                              >Ver entrega
+                              <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i
+                            ></a>
+                          }
+                          @if (proyecto.imagenUrl) {
+                            <a [href]="proyecto.imagenUrl" target="_blank" rel="noopener noreferrer"
+                              >Imagen del proyecto</a
+                            >
+                          }
+                        </div>
+                      </div>
+                    } @empty {
+                      <p>Sin proyectos compartidos.</p>
+                    }
+                  </section>
+                }
+                @if (candidaturaEnEdicion() === persona.id) {
+                  <form class="inline-editor" (ngSubmit)="guardarEstadoPostulacion(persona)">
+                    <label
+                      >Nuevo estado<select class="form-select" name="estado" [(ngModel)]="estadoId">
+                        @for (e of c.estadosPostulacion; track e.id) {
+                          <option [ngValue]="e.id">{{ e.nombre }}</option>
+                        }
+                      </select></label
+                    >
+                    @if (nombre(c.estadosPostulacion, estadoId) === 'Aceptada') {
+                      <p class="alert alert-warning">
+                        Aceptar es definitivo y ocupa un cupo. Si es el último, la vacante se
+                        cerrará.
+                      </p>
+                    }
+                    <label
+                      >Nota para el estudiante (opcional)<textarea
+                        class="form-control"
+                        rows="2"
+                        maxlength="4000"
+                        name="nota"
+                        [(ngModel)]="nota"
+                      ></textarea>
+                    </label>
+                    <div class="actions">
+                      <button
+                        class="btn btn-primary"
+                        [disabled]="ocupado() || estadoId === persona.estadoId"
+                      >
+                        Guardar estado
+                      </button>
+                      <button
+                        class="btn btn-outline-secondary"
+                        type="button"
+                        [disabled]="ocupado()"
+                        (click)="candidaturaEnEdicion.set(null)"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </form>
+                }
+              </article>
+            } @empty {
+              <p class="panel">Esta vacante aún no tiene postulantes.</p>
+            }
+          </div>
+          @if (p.total > p.tamano || p.pagina > 1) {
+            <nav class="actions pager" aria-label="Páginas de postulantes">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                [disabled]="ocupado() || p.pagina === 1"
+                (click)="verPostulantes(v, p.pagina - 1)"
+              >
+                Anterior
+              </button>
+              <span>Página {{ p.pagina }}</span
+              ><button
+                type="button"
+                class="btn btn-outline-secondary"
+                [disabled]="ocupado() || p.pagina * p.tamano >= p.total"
+                (click)="verPostulantes(v, p.pagina + 1)"
+              >
+                Siguiente
+              </button>
+            </nav>
+          }
+        } @else if (!ocupado() && error()) {
+          <button class="btn btn-outline-secondary" type="button" (click)="verPostulantes(v)">
+            Reintentar
+          </button>
+        }
+      }
+    }
+  }
+}

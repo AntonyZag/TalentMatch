@@ -1,0 +1,86 @@
+/* Sección: seguimiento de candidaturas */
+.lista {
+  display: grid;
+  gap: 1rem;
+  max-width: 64rem;
+}
+.encabezado {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+h2 {
+  margin: 0.3rem 0 0.75rem;
+  font-size: 1.35rem;
+  font-weight: 650;
+}
+.fecha,
+time {
+  font-size: 0.85rem;
+  color: #56616d;
+}
+.estado {
+  border-radius: 2rem;
+  background: #f2f4f6;
+  color: #374151;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.88rem;
+}
+.positiva,
+.match {
+  color: #066848;
+}
+.positiva {
+  background: #e1f8ed;
+}
+.mensaje,
+.historial p {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+details {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
+}
+summary {
+  width: fit-content;
+  font-weight: 550;
+}
+.historial {
+  list-style: none;
+  border-left: 2px solid #a6e5d0;
+  padding: 0 0 0 1.2rem;
+  margin: 1rem 0.6rem 0.25rem;
+}
+.historial li {
+  position: relative;
+  padding: 0.25rem 0 0.75rem;
+}
+.historial li::before {
+  content: '';
+  position: absolute;
+  top: 0.6rem;
+  left: -1.52rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: #10b981;
+}
+time {
+  display: block;
+}
+.retiro {
+  padding-top: 1rem;
+}
+.retiro h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.retiro label {
+  width: 100%;
+}
+.empty-icon {
+  font-size: 2rem;
+  color: #087752;
+}

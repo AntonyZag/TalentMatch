@@ -1,0 +1,261 @@
+<!-- Sección: explorador de vacantes -->
+@if (!detalle()) {
+  <header class="page-head">
+    <h1>Explorar vacantes</h1>
+    <p>Encuentra prácticas y primeros empleos según tu carrera y tus habilidades.</p>
+  </header>
+}
+@if (cargando()) {
+  <p role="status" class="panel">Cargando vacantes…</p>
+} @else if (error()) {
+  <div role="alert" class="alert alert-danger">
+    {{ error() }}
+    <button class="btn btn-link" type="button" (click)="reintentar()">Reintentar</button>
+  </div>
+} @else if (detalle(); as v) {
+  <!-- Sección: detalle y compatibilidad -->
+  <a class="back-link" routerLink="/vacantes" queryParamsHandling="preserve"
+    >Volver a las vacantes</a
+  >
+  <article class="panel detail-panel">
+    <div class="heading-row">
+      <span class="company-icon"><i aria-hidden="true" class="bi bi-building"></i></span>
+      <span class="status-tag">{{ v.estado }}</span>
+    </div>
+    <p class="company-name">{{ v.empresa }}</p>
+    <h1>{{ v.titulo }}</h1>
+    <div class="tags">
+      <span>{{ nombre(catalogos()?.tiposVacante, v.tipoId) }}</span
+      ><span>{{ nombre(catalogos()?.modalidades, v.modalidadId) }}</span>
+    </div>
+    @if (estudiante() && v.matchPct !== null) {
+      <div class="match">
+        <strong>{{ v.matchPct | number: '1.0-2' }} % de compatibilidad</strong>
+        <progress aria-label="Compatibilidad" [value]="v.matchPct" max="100"></progress>
+      </div>
+    }
+    <dl class="facts">
+      <div>
+        <dt>Cierre</dt>
+        <dd>{{ v.fechaCierre | date: 'dd/MM/yyyy' : 'UTC' }}</dd>
+      </div>
+      <div>
+        <dt>Cupos</dt>
+        <dd>{{ v.cupos }}</dd>
+      </div>
+      @if (v.ubicacion) {
+        <div>
+          <dt>Ubicación</dt>
+          <dd>{{ v.ubicacion }}</dd>
+        </div>
+      }
+      @if (v.sueldo !== null) {
+        <div>
+          <dt>Sueldo</dt>
+          <dd>S/ {{ v.sueldo | number: '1.2-2' }}</dd>
+        </div>
+      }
+      @if (v.carreraId) {
+        <div>
+          <dt>Carrera</dt>
+          <dd>{{ nombre(catalogos()?.carreras, v.carreraId) }}</dd>
+        </div>
+      }
+    </dl>
+    <h2>Descripción</h2>
+    <p class="multiline">{{ v.descripcion }}</p>
+    <h2>Habilidades solicitadas</h2>
+    @if (v.habilidades.length) {
+      <ul class="skill-list">
+        @for (h of v.habilidades; track h.habilidadId) {
+          <li>
+            <strong>{{ nombre(catalogos()?.habilidades, h.habilidadId) }}</strong>
+            <span
+              >{{ nombre(catalogos()?.niveles, h.nivelMinId) }} ·
+              {{ h.obligatoria ? 'Obligatoria' : 'Deseable' }}</span
+            >
+          </li>
+        }
+      </ul>
+    } @else {
+      <p>Sin requisitos de habilidades.</p>
+    }
+    <!-- Sección: postular como estudiante -->
+    @if (visitante()) {
+      <a
+        class="btn btn-primary"
+        routerLink="/"
+        [queryParams]="{ acceso: 1, returnUrl: regresoDespuesDelAcceso() }"
+        >Iniciar sesión para postular</a
+      >
+    } @else if (estudiante() && enviado()) {
+      <div class="alert alert-success" role="status">
+        Postulación registrada. <a routerLink="/mis-postulaciones">Ver mis postulaciones</a>
+      </div>
+    } @else if (estudiante() && formulario()) {
+      <form class="application-form" #form="ngForm" (ngSubmit)="form.valid && postular(v)">
+        <h2>Tu postulación</h2>
+        <label
+          >Proyecto de tu portafolio (opcional)
+          <select
+            class="form-select"
+            name="proyecto"
+            [(ngModel)]="proyectoId"
+            [disabled]="cargandoProyectos()"
+          >
+            <option [ngValue]="null">Sin proyecto adjunto</option>
+            @for (p of proyectos(); track p.id) {
+              <option [ngValue]="p.id">{{ p.titulo }}</option>
+            }
+          </select>
+        </label>
+        @if (cargandoProyectos()) {
+          <p role="status">Cargando tus proyectos…</p>
+        }
+        @if (errorProyectos()) {
+          <p role="alert">
+            {{ errorProyectos() }}
+            <button type="button" class="btn btn-link" (click)="abrirPostulacion()">
+              Reintentar
+            </button>
+          </p>
+        }
+        <label
+          >Mensaje para la empresa (opcional)
+          <textarea
+            class="form-control"
+            rows="3"
+            name="mensaje"
+            maxlength="4000"
+            [(ngModel)]="mensaje"
+          ></textarea>
+        </label>
+        @if (errorPostular()) {
+          <p class="alert alert-danger" role="alert">{{ errorPostular() }}</p>
+        }
+        <div class="actions">
+          <button class="btn btn-primary" [disabled]="enviando()">
+            {{ enviando() ? 'Enviando…' : 'Enviar postulación' }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            [disabled]="enviando()"
+            (click)="formulario.set(false)"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    } @else if (estudiante()) {
+      <button class="btn btn-primary" type="button" (click)="abrirPostulacion()">Postular</button>
+    }
+  </article>
+} @else if (pagina(); as p) {
+  <!-- Sección: búsqueda y filtros -->
+  <form class="panel filter-panel" (ngSubmit)="buscar()">
+    <div class="search-row">
+      <label class="search-label"
+        ><i class="bi bi-search" aria-hidden="true"></i>
+        <span class="visually-hidden">Buscar vacantes por título o descripción</span>
+        <input
+          class="form-control"
+          name="busqueda"
+          type="search"
+          maxlength="160"
+          [(ngModel)]="filtros.q"
+          placeholder="Busca un puesto o una palabra clave"
+        />
+      </label>
+      <button class="btn btn-primary" type="submit">Buscar vacantes</button>
+    </div>
+    <div class="filters">
+      <label
+        >Carrera<select class="form-select" name="carrera" [(ngModel)]="filtros.carreraId">
+          <option [ngValue]="null">Todas las carreras</option>
+          @for (item of catalogos()?.carreras; track item.id) {
+            <option [ngValue]="item.id">{{ item.nombre }}</option>
+          }
+        </select></label
+      >
+      <label
+        >Modalidad<select class="form-select" name="modalidad" [(ngModel)]="filtros.modalidadId">
+          <option [ngValue]="null">Todas las modalidades</option>
+          @for (item of catalogos()?.modalidades; track item.id) {
+            <option [ngValue]="item.id">{{ item.nombre }}</option>
+          }
+        </select></label
+      >
+      <label
+        >Habilidad<select class="form-select" name="habilidad" [(ngModel)]="filtros.habilidadId">
+          <option [ngValue]="null">Todas las habilidades</option>
+          @for (item of catalogos()?.habilidades; track item.id) {
+            <option [ngValue]="item.id">{{ item.nombre }}</option>
+          }
+        </select></label
+      >
+      <button class="clear-link" type="button" (click)="limpiar()">Limpiar filtros</button>
+    </div>
+  </form>
+  <!-- Sección: resultados -->
+  <h2 class="result-heading">
+    {{ p.total }} {{ p.total === 1 ? 'vacante disponible' : 'vacantes disponibles' }}
+  </h2>
+  <div class="vacancy-grid">
+    @for (v of p.items; track v.id) {
+      <article class="panel vacancy-card">
+        <div class="heading-row">
+          <span class="company-icon" aria-hidden="true"><i class="bi bi-building"></i></span>
+          <span class="status-tag">{{ v.estado }}</span>
+        </div>
+        <p class="company-name">{{ v.empresa }}</p>
+        <h3>
+          <a [routerLink]="['/vacantes', v.id]" queryParamsHandling="preserve">{{ v.titulo }}</a>
+        </h3>
+        <div class="tags">
+          <span>{{ nombre(catalogos()?.modalidades, v.modalidadId) }}</span
+          ><span>{{ nombre(catalogos()?.tiposVacante, v.tipoId) }}</span>
+        </div>
+        <p class="snippet">{{ v.descripcion }}</p>
+        @if (estudiante() && v.matchPct !== null) {
+          <div class="match">
+            <strong>{{ v.matchPct | number: '1.0-2' }} % de compatibilidad</strong>
+            <progress aria-label="Compatibilidad" max="100" [value]="v.matchPct"></progress>
+          </div>
+        }
+        <div class="card-foot">
+          <span
+            ><i class="bi bi-calendar3" aria-hidden="true"></i> Cierra el
+            {{ v.fechaCierre | date: 'dd/MM/yyyy' : 'UTC' }}</span
+          >
+          <a [routerLink]="['/vacantes', v.id]" queryParamsHandling="preserve">Ver detalle</a>
+        </div>
+      </article>
+    } @empty {
+      <p class="panel empty">
+        Sin vacantes para esta búsqueda. Prueba otra carrera, modalidad o habilidad.
+      </p>
+    }
+  </div>
+  @if (p.total > p.tamano || p.pagina > 1) {
+    <nav class="actions pager" aria-label="Páginas de vacantes">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        [disabled]="p.pagina <= 1"
+        (click)="buscar(p.pagina - 1)"
+      >
+        Anterior
+      </button>
+      <span>Página {{ p.pagina }}</span>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        [disabled]="p.pagina * p.tamano >= p.total"
+        (click)="buscar(p.pagina + 1)"
+      >
+        Siguiente
+      </button>
+    </nav>
+  }
+}

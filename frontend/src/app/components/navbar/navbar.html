@@ -1,0 +1,103 @@
+<div class="workspace">
+  <a class="skip-link" href="#contenido" (click)="$event.preventDefault(); contenido.focus()"
+    >Ir al contenido</a
+  >
+  <!-- Sección: cabecera móvil -->
+  <header class="mobile-top">
+    <a routerLink="/" class="wordmark" aria-label="TalentMatch, inicio">Talent<span>Match</span></a>
+    <button
+      type="button"
+      class="menu-button"
+      (click)="abierto.set(!abierto())"
+      [attr.aria-expanded]="abierto()"
+      aria-controls="menu-lateral"
+      aria-label="Menú principal"
+    >
+      <i class="bi bi-list" aria-hidden="true"></i> Menú
+    </button>
+  </header>
+  @if (abierto()) {
+    <button type="button" class="scrim" (click)="cerrarMenu()" aria-label="Cerrar menú"></button>
+  }
+  <!-- Sección: navegación lateral -->
+  <aside class="sidebar" id="menu-lateral" [class.open]="abierto()">
+    <div class="sidebar-head">
+      <a routerLink="/" class="wordmark" aria-label="TalentMatch, inicio"
+        >Talent<span>Match</span></a
+      >
+      <button type="button" class="close-menu" aria-label="Cerrar menú" (click)="cerrarMenu()">
+        ×
+      </button>
+    </div>
+    <nav aria-label="Navegación principal" (click)="cerrarMenu()">
+      <p class="section-label">Explorar</p>
+      <!-- Opción: Vacantes -->
+      <a routerLink="/vacantes" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <i class="bi bi-briefcase" aria-hidden="true"></i> Vacantes
+      </a>
+      @if (sesion.usuario()?.rol === 'ESTUDIANTE') {
+        <p class="section-label">Mi espacio</p>
+        <!-- Opción: Mi perfil -->
+        <a routerLink="/perfil-estudiante" routerLinkActive="active" ariaCurrentWhenActive="page">
+          <i class="bi bi-person" aria-hidden="true"></i> Mi perfil
+        </a>
+        <!-- Opción: Mis proyectos -->
+        <a routerLink="/proyectos" routerLinkActive="active" ariaCurrentWhenActive="page">
+          <i class="bi bi-folder2-open" aria-hidden="true"></i> Mis proyectos
+        </a>
+        <!-- Opción: Mis postulaciones -->
+        <a routerLink="/mis-postulaciones" routerLinkActive="active" ariaCurrentWhenActive="page">
+          <i class="bi bi-send" aria-hidden="true"></i> Mis postulaciones
+        </a>
+      }
+      @if (sesion.usuario()?.rol === 'EMPRESA') {
+        <p class="section-label">Mi empresa</p>
+        <!-- Opción: Panel de empresa -->
+        <a routerLink="/panel-empresa" routerLinkActive="active" ariaCurrentWhenActive="page">
+          <i class="bi bi-building" aria-hidden="true"></i> Panel de empresa
+        </a>
+      }
+      @if (sesion.usuario()?.rol === 'ADMIN') {
+        <p class="section-label">Administración</p>
+        <!-- Opción: Impacto social -->
+        <a routerLink="/impacto" routerLinkActive="active" ariaCurrentWhenActive="page">
+          <i class="bi bi-bar-chart" aria-hidden="true"></i> Impacto social
+        </a>
+      }
+    </nav>
+    <!-- Sección: cuenta -->
+    <div class="account">
+      @if (sesion.usuario(); as usuario) {
+        <div class="identity">
+          <span class="avatar" aria-hidden="true">{{
+            usuario.correo.slice(0, 1).toUpperCase()
+          }}</span>
+          <div>
+            <strong>{{
+              usuario.rol === 'ADMIN'
+                ? 'Administración'
+                : usuario.rol === 'EMPRESA'
+                  ? 'Empresa'
+                  : 'Estudiante'
+            }}</strong>
+            <span class="email" [title]="usuario.correo">{{ usuario.correo }}</span>
+          </div>
+        </div>
+        <button type="button" class="account-action" (click)="salir()">
+          <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Cerrar sesión
+        </button>
+      } @else {
+        <a routerLink="/" [queryParams]="{ acceso: 1 }" class="btn btn-primary w-100"
+          >Iniciar sesión</a
+        >
+        <a routerLink="/" [queryParams]="{ acceso: 1, registro: 1 }" class="guest-signup"
+          >Crear cuenta</a
+        >
+      }
+    </div>
+  </aside>
+  <div class="work-area">
+    <main tabindex="-1" id="contenido" #contenido><router-outlet /></main>
+    <app-footer />
+  </div>
+</div>

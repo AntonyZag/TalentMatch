@@ -1,0 +1,58 @@
+<main class="escenario" [class.acceso-abierto]="acceso()">
+  <div class="marco">
+    <!-- Sección: la misma fotografía acompaña la portada y el acceso -->
+    <div class="fotografia" aria-hidden="true"></div>
+
+    <!-- Sección: navegación de la portada -->
+    <header class="cabecera" [attr.inert]="acceso() ? '' : null">
+      <a routerLink="/" class="marca" aria-label="TalentMatch, inicio">
+        <span class="simbolo" aria-hidden="true"><i></i><i></i></span>
+        <span>Talent<span class="esmeralda">Match</span></span>
+      </a>
+      <nav aria-label="Navegación principal">
+        <!-- Opción: Vacantes públicas -->
+        <a routerLink="/vacantes" class="enlace-vacantes">Vacantes</a>
+        <!-- Opción: Iniciar sesión -->
+        <a routerLink="/" [queryParams]="{ acceso: 1 }" class="enlace-acceso">Iniciar sesión</a>
+      </nav>
+    </header>
+
+    <!-- Sección: bienvenida y acciones principales -->
+    <section class="bienvenida" [attr.inert]="acceso() ? '' : null" aria-labelledby="titulo-inicio">
+      <h1 id="titulo-inicio">
+        <span class="saludo">Bienvenido a</span
+        ><span class="nombre">Talent<span class="esmeralda">Match</span></span>
+      </h1>
+      <p>No esperes a terminar la carrera: construye tu experiencia desde hoy.</p>
+      <div class="acciones">
+        <a #empezar class="empezar" routerLink="/" [queryParams]="{ acceso: 1 }">EMPEZAR</a>
+        <a class="explorar" routerLink="/vacantes">Explorar vacantes</a>
+      </div>
+    </section>
+
+    <!-- Opción: Regresar a la portada -->
+    <a
+      class="volver"
+      routerLink="/"
+      aria-label="Volver a la portada"
+      [attr.inert]="acceso() ? null : ''"
+      ><span aria-hidden="true">←</span></a
+    >
+    <!-- Sección: formulario de acceso o registro -->
+    <section
+      #panelAcceso
+      class="panel-acceso"
+      tabindex="-1"
+      aria-label="Acceso a TalentMatch"
+      [attr.inert]="acceso() ? null : ''"
+    >
+      @defer (when acceso()) {
+        <app-auth />
+      } @placeholder {
+        @if (acceso()) {
+          <p class="p-5 text-dark" role="status">Cargando formulario…</p>
+        }
+      }
+    </section>
+  </div>
+</main>

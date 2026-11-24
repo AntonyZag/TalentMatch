@@ -1,0 +1,211 @@
+<!-- Sección: encabezado del perfil -->
+<header class="page-head">
+  <div>
+    <h1>Mi perfil</h1>
+    <p>Tu formación, tus habilidades y tus enlaces profesionales.</p>
+  </div>
+  @if (perfil(); as persona) {
+    <a class="btn btn-outline-secondary" [routerLink]="['/portafolio', persona.id]"
+      ><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Ver mi portafolio</a
+    >
+  }
+</header>
+@if (cargando()) {
+  <p role="status">Cargando tu perfil…</p>
+}
+@if (errorCarga()) {
+  <div class="alert alert-danger" role="alert">
+    {{ errorCarga() }} <button class="btn btn-link" (click)="cargar()">Reintentar</button>
+  </div>
+}
+@if (catalogos(); as cat) {
+  @if (perfil(); as persona) {
+    <div class="perfil-grid">
+      <!-- Sección: identidad y formulario académico -->
+      <section class="panel">
+        <div class="identity">
+          <div class="initials" aria-hidden="true">
+            {{ persona.nombres.charAt(0) }}{{ persona.apellidoPat.charAt(0) }}
+          </div>
+          <div>
+            <h2>{{ persona.nombres }} {{ persona.apellidoPat }} {{ persona.apellidoMat }}</h2>
+            @if (persona.dniValidado) {
+              <span class="verified"
+                ><i class="bi bi-patch-check-fill" aria-hidden="true"></i> DNI verificado</span
+              >
+            }
+          </div>
+        </div>
+        <form #perfilForm="ngForm" (ngSubmit)="guardarPerfil(perfilForm)">
+          <fieldset [disabled]="guardandoPerfil()">
+            <legend>Información académica</legend>
+            <div class="row g-3">
+              <label class="col-12"
+                >Carrera<select
+                  class="form-select"
+                  name="carrera"
+                  [(ngModel)]="datos.carreraId"
+                  required
+                >
+                  @for (item of cat.carreras; track item.id) {
+                    <option [ngValue]="item.id">{{ item.nombre }}</option>
+                  }
+                </select></label
+              >
+              <label class="col-12 col-md-6"
+                >Estado académico<select
+                  class="form-select"
+                  name="estado"
+                  [(ngModel)]="datos.estadoAcademicoId"
+                  required
+                >
+                  @for (item of cat.estadosAcademicos; track item.id) {
+                    <option [ngValue]="item.id">{{ item.nombre }}</option>
+                  }
+                </select></label
+              >
+              @if (pideCiclo()) {
+                <label class="col-6 col-md-3"
+                  >Ciclo<input
+                    class="form-control"
+                    type="number"
+                    name="ciclo"
+                    [(ngModel)]="datos.ciclo"
+                    min="1"
+                    max="12"
+                    required
+                /></label>
+              }
+              <label class="col-6 col-md-3"
+                >Año de egreso<input
+                  class="form-control"
+                  name="egreso"
+                  type="number"
+                  [(ngModel)]="datos.anioEgreso"
+                  min="1900"
+                  max="9999"
+              /></label>
+            </div>
+          </fieldset>
+          <!-- Sección: presentación y enlaces -->
+          <fieldset [disabled]="guardandoPerfil()">
+            <legend>Presentación y contacto</legend>
+            <div class="row g-3">
+              <label class="col-12"
+                >Acerca de mí<textarea
+                  class="form-control"
+                  name="bio"
+                  rows="3"
+                  [(ngModel)]="datos.bio"
+                ></textarea>
+              </label>
+              <label class="col-12"
+                >Teléfono<input
+                  class="form-control"
+                  type="tel"
+                  maxlength="25"
+                  autocomplete="tel"
+                  name="telefono"
+                  [(ngModel)]="datos.telefono"
+              /></label>
+              <label class="col-12 col-xl-6"
+                >GitHub<input
+                  class="form-control"
+                  type="url"
+                  pattern="https?://.+"
+                  placeholder="https://"
+                  name="github"
+                  [(ngModel)]="datos.githubUrl"
+              /></label>
+              <label class="col-12 col-xl-6"
+                >LinkedIn<input
+                  class="form-control"
+                  type="url"
+                  pattern="https?://.+"
+                  placeholder="https://"
+                  name="linkedin"
+                  [(ngModel)]="datos.linkedinUrl"
+              /></label>
+            </div>
+          </fieldset>
+          @if (errorPerfil()) {
+            <p class="text-danger" role="alert">{{ errorPerfil() }}</p>
+          }
+          @if (avisoPerfil()) {
+            <p class="text-success" role="status">{{ avisoPerfil() }}</p>
+          }
+          <button type="submit" class="btn btn-primary" [disabled]="guardandoPerfil()">
+            {{ guardandoPerfil() ? 'Guardando…' : 'Guardar perfil' }}
+          </button>
+        </form>
+      </section>
+
+      <!-- Sección: habilidades y niveles -->
+      <section class="panel skills-panel">
+        <h2>Mis habilidades</h2>
+        <p class="text-secondary">
+          Tus niveles ayudan a calcular la compatibilidad con cada vacante.
+        </p>
+        <fieldset [disabled]="guardandoHabilidades()">
+          <div class="skill-editor">
+            <label
+              >Habilidad<select class="form-select" [(ngModel)]="habilidadId">
+                <option [ngValue]="null">Elige una habilidad</option>
+                @for (item of cat.habilidades; track item.id) {
+                  <option [ngValue]="item.id">{{ item.nombre }}</option>
+                }
+              </select></label
+            >
+            <label
+              >Nivel<select class="form-select" [(ngModel)]="nivelId">
+                <option [ngValue]="null">Elige el nivel</option>
+                @for (item of cat.niveles; track item.id) {
+                  <option [ngValue]="item.id">{{ item.nombre }}</option>
+                }
+              </select></label
+            >
+            <button class="btn btn-outline-secondary" (click)="agregarHabilidad()">
+              <i class="bi bi-plus-lg" aria-hidden="true"></i> Agregar habilidad
+            </button>
+          </div>
+          <ul class="skill-list">
+            @for (item of habilidades(); track item.habilidadId) {
+              <li>
+                <label
+                  >{{ nombre(cat.habilidades, item.habilidadId) }}
+                  <select
+                    class="form-select form-select-sm"
+                    [ngModel]="item.nivelId"
+                    (ngModelChange)="cambiarNivel(item.habilidadId, $event)"
+                  >
+                    @for (nivel of cat.niveles; track nivel.id) {
+                      <option [ngValue]="nivel.id">{{ nivel.nombre }}</option>
+                    }
+                  </select>
+                </label>
+                <button
+                  class="btn btn-light"
+                  [attr.aria-label]="'Quitar ' + nombre(cat.habilidades, item.habilidadId)"
+                  (click)="quitarHabilidad(item.habilidadId)"
+                >
+                  <i class="bi bi-x-lg" aria-hidden="true"></i>
+                </button>
+              </li>
+            } @empty {
+              <li class="text-secondary">Todavía no agregaste habilidades.</li>
+            }
+          </ul>
+          @if (errorHabilidades()) {
+            <p class="text-danger" role="alert">{{ errorHabilidades() }}</p>
+          }
+          @if (avisoHabilidades()) {
+            <p class="text-success" role="status">{{ avisoHabilidades() }}</p>
+          }
+          <button class="btn btn-primary" (click)="guardarHabilidades()">
+            {{ guardandoHabilidades() ? 'Guardando…' : 'Guardar habilidades' }}
+          </button>
+        </fieldset>
+      </section>
+    </div>
+  }
+}

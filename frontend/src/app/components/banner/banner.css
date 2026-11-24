@@ -1,0 +1,267 @@
+/* Sección: fotografía y transición de pantalla a tarjeta */
+:host {
+  display: block;
+}
+.escenario {
+  --borde: clamp(1rem, 3.4vw, 3.75rem);
+  --movimiento: 700ms cubic-bezier(0.22, 0.78, 0.23, 1);
+  position: relative;
+  height: 100dvh;
+  min-height: 22rem;
+  color: #fff;
+  background: var(--ink);
+  isolation: isolate;
+}
+.marco {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #fff;
+  transition:
+    inset var(--movimiento),
+    border-radius var(--movimiento);
+}
+.fotografia {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 100%;
+  height: 100%;
+  background: #243331 url('/images/inicio-bg.jpg') center center / cover no-repeat;
+  transition:
+    width var(--movimiento),
+    height var(--movimiento),
+    background-position var(--movimiento);
+}
+.fotografia::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(4, 12, 16, 0.38), transparent 26%),
+    linear-gradient(
+      90deg,
+      rgba(3, 12, 14, 0.04) 20%,
+      rgba(3, 10, 15, 0.08) 46%,
+      rgba(3, 10, 15, 0.62) 100%
+    );
+}
+.acceso-abierto .marco {
+  inset: var(--borde);
+  border-radius: 1.5rem;
+}
+.acceso-abierto .fotografia {
+  width: 50%;
+  background-position: 18% center;
+}
+
+/* Sección: identidad y navegación */
+:is(.cabecera, .bienvenida) {
+  transition: opacity 0.28s ease;
+}
+.cabecera {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(1.25rem, 3.8vh, 3rem) clamp(1.4rem, 5.3vw, 6rem);
+}
+:is(.cabecera nav, .acciones, .marca) {
+  display: flex;
+  align-items: center;
+}
+.cabecera nav {
+  gap: clamp(1rem, 2.2vw, 2.5rem);
+}
+:is(.cabecera a, .acciones a, .volver) {
+  color: #fff;
+  text-decoration: none;
+}
+.marca {
+  gap: 0.7rem;
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
+  font-weight: 650;
+  letter-spacing: -0.065em;
+}
+.esmeralda {
+  color: var(--emerald);
+}
+.simbolo {
+  display: inline-flex;
+  width: 1.7rem;
+  height: 1.7rem;
+  position: relative;
+}
+.simbolo i {
+  position: absolute;
+  width: 0.82rem;
+  height: 1.2rem;
+  border-radius: 0.22rem;
+  background: var(--emerald);
+  transform: skewY(-23deg);
+}
+.simbolo i:first-child {
+  left: 0;
+  bottom: 0.09rem;
+}
+.simbolo i:last-child {
+  top: 0.09rem;
+  right: 0;
+}
+.cabecera nav a {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.enlace-acceso {
+  padding: 0.62rem 1.1rem;
+  border: 1px solid #ffffff82;
+  border-radius: 2rem;
+}
+:is(.enlace-acceso, .volver):hover {
+  background: #ffffff25;
+}
+
+/* Sección: texto y acciones sobre la pared */
+.bienvenida {
+  position: absolute;
+  top: 50%;
+  left: 51%;
+  right: 4%;
+  transform: translateY(-43%);
+}
+.bienvenida h1 {
+  color: #fff;
+  margin: 0;
+  letter-spacing: -0.065em;
+  line-height: 0.99;
+  font-weight: 700;
+}
+:is(.saludo, .nombre) {
+  display: block;
+}
+.saludo {
+  font-size: clamp(2.2rem, 3.7vw, 4.5rem);
+  margin-bottom: 0.15em;
+  font-weight: 600;
+}
+.nombre {
+  font-size: clamp(3.1rem, 6.1vw, 7.5rem);
+}
+.bienvenida p {
+  max-width: 32rem;
+  margin: 1.5rem 0 1.9rem;
+  color: #f2f4f4;
+  line-height: 1.65;
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+}
+.acciones {
+  gap: clamp(1.1rem, 2.2vw, 2.5rem);
+  flex-wrap: wrap;
+}
+.empezar {
+  background: var(--ink);
+  padding: 0.95rem 2.1rem;
+  border-radius: 0.7rem;
+  border: 1px solid #ffffff69;
+  font-size: 0.94rem;
+  font-weight: 650;
+  letter-spacing: 0.09em;
+}
+.empezar:hover {
+  background: #1c2b37;
+  border-color: var(--emerald);
+}
+.acciones .explorar {
+  text-decoration: underline;
+}
+.escenario a:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+.acceso-abierto :is(.cabecera, .bienvenida) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Sección: mitad blanca y botón de regreso */
+:is(.volver, .panel-acceso) {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0s 0.3s;
+}
+.volver {
+  position: absolute;
+  z-index: 2;
+  top: 1.5rem;
+  left: 1.5rem;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid #ffffff80;
+  border-radius: 50%;
+  background: #111827a6;
+  font-size: 1.45rem;
+  line-height: 1;
+}
+.panel-acceso {
+  position: absolute;
+  inset: 0 0 0 50%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  outline: 0;
+}
+.acceso-abierto :is(.volver, .panel-acceso) {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.18s, 0s;
+}
+
+@media (max-width: 700px) {
+  .escenario {
+    --borde: 0.65rem;
+  }
+  .cabecera {
+    padding: 1.25rem;
+  }
+  .enlace-vacantes {
+    display: none;
+  }
+  .fotografia {
+    background-position: 29% center;
+  }
+  .fotografia::after {
+    background: linear-gradient(180deg, #09101440, transparent 30%, #09101435 46%, #091014eb 100%);
+  }
+  .bienvenida {
+    inset: auto 1.5rem clamp(2rem, 9vh, 5rem);
+    transform: none;
+  }
+  .saludo {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+  .nombre {
+    font-size: clamp(2.8rem, 12vw, 4.6rem);
+  }
+  .acceso-abierto .fotografia {
+    width: 100%;
+    height: 17%;
+    background-position: center 47%;
+  }
+  .volver {
+    top: 0.75rem;
+    left: 0.75rem;
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+  .panel-acceso {
+    inset: 17% 0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .escenario * {
+    transition: none !important;
+  }
+}
