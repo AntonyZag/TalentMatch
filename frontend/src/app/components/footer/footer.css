@@ -1,0 +1,22 @@
+/* Sección: enlaces del pie */
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  border-top: 1px solid #e2e5e8;
+  padding: 1rem clamp(1.25rem, 3.8vw, 3.75rem);
+  font-size: 0.85rem;
+  color: #606974;
+}
+footer span {
+  font-weight: 600;
+}
+nav {
+  display: flex;
+  gap: 1.2rem;
+}
+a {
+  color: inherit;
+  text-underline-offset: 3px;
+}

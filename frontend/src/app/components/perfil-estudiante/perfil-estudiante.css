@@ -1,0 +1,79 @@
+/* Sección: composición del perfil */
+.perfil-grid {
+  display: grid;
+  gap: 1.25rem;
+  align-items: start;
+  grid-template-columns: minmax(0, 1.6fr) minmax(16rem, 1fr);
+}
+.identity {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  border-bottom: 1px solid #d1d5db;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.initials {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: none;
+  border-radius: 1rem;
+  background: #e8f8f1;
+  color: #086746;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+h2 {
+  font-size: 1.3rem;
+  font-weight: 650;
+}
+.verified {
+  color: #086746;
+  font-size: 0.88rem;
+}
+form fieldset {
+  margin: 0 0 1.5rem;
+}
+legend {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+label {
+  font-weight: 500;
+}
+label input,
+label textarea,
+label select {
+  margin-top: 0.35rem;
+}
+.ng-submitted .ng-invalid {
+  border-color: #b42318;
+}
+/* Sección: lista editable de habilidades */
+.skill-editor {
+  display: grid;
+  gap: 0.75rem;
+}
+.skill-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+.skill-list li {
+  border-top: 1px solid #e5e7eb;
+  padding: 0.8rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.skill-list label {
+  flex: 1;
+}
+@media (max-width: 990px) {
+  .perfil-grid {
+    grid-template-columns: 1fr;
+  }
+}

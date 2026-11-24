@@ -1,0 +1,112 @@
+/* Sección: proyectos y evidencias */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  gap: 1rem;
+}
+.project {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.project-image {
+  width: 100%;
+  height: 10rem;
+  object-fit: cover;
+  border-radius: 0.7rem;
+  margin-bottom: 1rem;
+}
+.project-meta,
+.acciones,
+.tags {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+.project-meta {
+  justify-content: space-between;
+  color: #4b5563;
+  font-size: 0.83rem;
+  margin-bottom: 1rem;
+}
+h2 {
+  font-size: 1.3rem;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.curso {
+  color: #53616c;
+  font-size: 0.9rem;
+}
+.descripcion {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.tags span {
+  font-size: 0.82rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 2rem;
+  color: #116045;
+  background: #e8f8f1;
+}
+.links {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+.links a {
+  font-size: 0.88rem;
+  color: #155941;
+  font-weight: 600;
+}
+.project-footer {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #e5e7eb;
+}
+.empty {
+  text-align: center;
+  grid-column: 1/-1;
+}
+.empty > i {
+  font-size: 2rem;
+  color: #10815f;
+}
+/* Sección: formulario de proyectos */
+.project-form {
+  max-width: 60rem;
+}
+.project-form h2 {
+  margin-bottom: 1.25rem;
+}
+.project-form label {
+  font-weight: 500;
+}
+.project-form input:not([type='checkbox']),
+.project-form textarea {
+  margin-top: 0.4rem;
+}
+.project-form small {
+  color: #5d6571;
+}
+legend {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.skills label {
+  padding: 0.35rem 0.65rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+}
+input[type='checkbox'] {
+  accent-color: #087752;
+}
+.ng-submitted .ng-invalid {
+  border-color: #b42318;
+}

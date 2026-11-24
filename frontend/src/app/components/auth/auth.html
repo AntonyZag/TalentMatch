@@ -1,0 +1,250 @@
+<div class="acceso-contenido">
+  <div class="hoja">
+    <header>
+      <h2>{{ modo() === 'login' ? 'Iniciar sesión' : 'Crear una cuenta' }}</h2>
+    </header>
+    <!-- Sección: selección de acceso o registro -->
+    <div class="pastilla" role="group" aria-label="Tipo de acceso">
+      <!-- Opción: Iniciar sesión -->
+      <button
+        type="button"
+        [class.activa]="modo() === 'login'"
+        [attr.aria-pressed]="modo() === 'login'"
+        [disabled]="enviando()"
+        (click)="cambiarModo('login')"
+      >
+        Iniciar sesión
+      </button>
+      <!-- Opción: Registrarse -->
+      <button
+        type="button"
+        [class.activa]="modo() === 'registro'"
+        [attr.aria-pressed]="modo() === 'registro'"
+        [disabled]="enviando()"
+        (click)="cambiarModo('registro')"
+      >
+        Registrarse
+      </button>
+    </div>
+
+    @if (exito()) {
+      <p class="aviso confirmado" role="status">{{ exito() }}</p>
+    }
+    <form (submit)="enviar($event)">
+      <fieldset [disabled]="enviando()">
+        @if (modo() === 'registro') {
+          <!-- Sección: tipo de cuenta e identidad -->
+          <div class="tipo" role="group" aria-label="Tipo de cuenta">
+            <!-- Opción: Estudiante -->
+            <button
+              type="button"
+              [class.seleccionado]="esEstudiante()"
+              [attr.aria-pressed]="esEstudiante()"
+              (click)="cambiarTipo('ESTUDIANTE')"
+            >
+              <i class="bi bi-mortarboard" aria-hidden="true"></i>Soy Estudiante
+            </button>
+            <!-- Opción: Empresa -->
+            <button
+              type="button"
+              [class.seleccionado]="!esEstudiante()"
+              [attr.aria-pressed]="!esEstudiante()"
+              (click)="cambiarTipo('EMPRESA')"
+            >
+              <i class="bi bi-building" aria-hidden="true"></i>Soy Empresa
+            </button>
+          </div>
+          <label for="registro-documento">{{ esEstudiante() ? 'DNI' : 'RUC' }}</label>
+          <div class="validacion">
+            <input
+              #campoDoc
+              id="registro-documento"
+              type="text"
+              inputmode="numeric"
+              required
+              autocomplete="off"
+              [attr.pattern]="esEstudiante() ? '[0-9]{8}' : '[0-9]{11}'"
+              [attr.maxlength]="esEstudiante() ? 8 : 11"
+              [placeholder]="esEstudiante() ? '8 dígitos' : '11 dígitos'"
+              [value]="documento()"
+              (input)="cambiarDocumento(campoDoc.value)"
+            />
+            <button
+              class="validar"
+              type="button"
+              [disabled]="!documentoValido() || validando() || verificado()"
+              (click)="validarDocumento()"
+            >
+              {{
+                validando()
+                  ? 'Validando…'
+                  : verificado()
+                    ? 'Validado ✓'
+                    : esEstudiante()
+                      ? 'Validar DNI'
+                      : 'Validar RUC'
+              }}
+            </button>
+          </div>
+          @if (errorDocumento()) {
+            <p role="alert" class="aviso error">{{ errorDocumento() }}</p>
+          }
+          <div aria-live="polite">
+            @if (identidadDni(); as datos) {
+              <div class="identidad">
+                <label for="registro-nombres">Nombres y apellidos</label>
+                <input
+                  id="registro-nombres"
+                  readonly
+                  [value]="[datos.nombres, datos.apellidoPat, datos.apellidoMat].join(' ').trim()"
+                />
+              </div>
+            }
+            @if (identidadRuc(); as datos) {
+              <div class="identidad">
+                <label for="registro-razon">Razón social</label>
+                <input id="registro-razon" readonly [value]="datos.razonSocial" />
+                <label for="registro-direccion">Dirección</label>
+                <input
+                  id="registro-direccion"
+                  readonly
+                  [value]="datos.direccion || 'Sin dirección registrada'"
+                />
+              </div>
+            }
+          </div>
+
+          <!-- Sección: datos del catálogo según el tipo de cuenta -->
+          @if (cargandoCatalogos()) {
+            <p class="aviso" role="status">Cargando opciones…</p>
+          }
+          @if (errorCatalogos()) {
+            <p class="aviso error" role="alert">
+              {{ errorCatalogos() }}
+              <button type="button" class="reintentar" (click)="cargarCatalogos()">
+                Reintentar
+              </button>
+            </p>
+          }
+          @if (catalogos(); as opciones) {
+            @if (esEstudiante()) {
+              <label for="registro-carrera">Carrera</label>
+              <select
+                #campoCarrera
+                id="registro-carrera"
+                required
+                (change)="carreraId.set(+campoCarrera.value)"
+              >
+                <option value="">Selecciona tu carrera</option>
+                @for (c of opciones.carreras; track c.id) {
+                  <option [value]="c.id" [selected]="c.id === carreraId()">{{ c.nombre }}</option>
+                }
+              </select>
+              <div class="datos-academicos">
+                <div>
+                  <label for="registro-estado">Estado académico</label>
+                  <select
+                    #campoEstado
+                    id="registro-estado"
+                    required
+                    (change)="estadoId.set(+campoEstado.value)"
+                  >
+                    <option value="">Selecciona tu estado</option>
+                    @for (e of opciones.estadosAcademicos; track e.id) {
+                      <option [value]="e.id" [selected]="e.id === estadoId()">
+                        {{ e.nombre }}
+                      </option>
+                    }
+                  </select>
+                </div>
+                @if (pideCiclo()) {
+                  <div class="ciclo">
+                    <label for="registro-ciclo">Ciclo</label>
+                    <input
+                      #campoCiclo
+                      id="registro-ciclo"
+                      required
+                      type="number"
+                      min="1"
+                      max="12"
+                      step="1"
+                      [value]="ciclo() ?? ''"
+                      (input)="ciclo.set(campoCiclo.value ? campoCiclo.valueAsNumber : null)"
+                    />
+                  </div>
+                }
+              </div>
+            } @else {
+              <label for="registro-sector">Sector</label>
+              <select
+                #campoSector
+                id="registro-sector"
+                required
+                (change)="sectorId.set(+campoSector.value)"
+              >
+                <option value="">Selecciona el sector</option>
+                @for (s of opciones.sectores; track s.id) {
+                  <option [value]="s.id" [selected]="s.id === sectorId()">{{ s.nombre }}</option>
+                }
+              </select>
+            }
+          }
+        }
+
+        <!-- Sección: credenciales -->
+        <label for="acceso-correo">Correo electrónico</label>
+        <div class="campo-icono">
+          <i class="bi bi-envelope" aria-hidden="true"></i>
+          <input
+            #campoCorreo
+            id="acceso-correo"
+            type="email"
+            required
+            maxlength="254"
+            autocomplete="username"
+            placeholder="Tu correo electrónico"
+            [value]="correo()"
+            (input)="correo.set(campoCorreo.value)"
+          />
+        </div>
+        <label for="acceso-clave">Contraseña</label>
+        <div class="campo-icono con-ojo">
+          <i class="bi bi-lock" aria-hidden="true"></i>
+          <input
+            #campoClave
+            id="acceso-clave"
+            [type]="mostrarClave() ? 'text' : 'password'"
+            required
+            maxlength="72"
+            [attr.minlength]="modo() === 'registro' ? 8 : 1"
+            [autocomplete]="modo() === 'login' ? 'current-password' : 'new-password'"
+            [placeholder]="modo() === 'login' ? 'Tu contraseña' : 'Mínimo 8 caracteres'"
+            [value]="contrasena()"
+            (input)="contrasena.set(campoClave.value)"
+          />
+          <button
+            type="button"
+            class="ojo"
+            [attr.aria-label]="mostrarClave() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            [attr.aria-pressed]="mostrarClave()"
+            (click)="mostrarClave.set(!mostrarClave())"
+          >
+            <i [class]="mostrarClave() ? 'bi bi-eye-slash' : 'bi bi-eye'" aria-hidden="true"></i>
+          </button>
+        </div>
+        @if (errorEnvio()) {
+          <p role="alert" class="aviso error">{{ errorEnvio() }}</p>
+        }
+        <button
+          type="submit"
+          class="enviar"
+          [disabled]="enviando() || (modo() === 'registro' && (validando() || !catalogos()))"
+        >
+          {{
+            enviando() ? 'Un momento…' : modo() === 'login' ? 'Iniciar sesión' : 'Crear mi cuenta'
+          }}
+        </button>
+      </fieldset>
+    </form>
+  </div>
+</div>

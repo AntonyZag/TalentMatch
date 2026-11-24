@@ -1,3 +1,128 @@
+/* Sección: identidad visual compartida */
+:root {
+  --ink: #111827;
+  --emerald: #10b981;
+  --line: #d1d5db;
+  --paper: #ffffff;
+  --bs-body-font-family: Poppins, Arial, sans-serif;
+  --bs-body-color: var(--ink);
+  --bs-border-color: var(--line);
+  --bs-link-color: #116449;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 body {
-  background-color: #f8f9fa;
+  margin: 0;
+  font-family: Poppins, Arial, sans-serif;
+  line-height: 1.55;
+  color: var(--ink);
+  background: #f6f7f8;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button:not(:disabled),
+select:not(:disabled) {
+  cursor: pointer;
+}
+a {
+  text-underline-offset: 0.18em;
+}
+:focus-visible {
+  outline: 3px solid #087c58;
+  outline-offset: 3px;
+}
+::selection {
+  background: #b5efd9;
+  color: #111827;
+}
+/* Sección: encabezados y tarjetas de las vistas internas */
+.page-head {
+  margin: 0 0 clamp(1.4rem, 3vw, 2.25rem);
+}
+.page-head:has(> div:first-child) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.page-head h1 {
+  font-size: clamp(1.8rem, 3vw, 2.75rem);
+  letter-spacing: -0.055em;
+  font-weight: 650;
+  line-height: 1.15;
+  margin: 0;
+}
+.page-head p {
+  color: #536171;
+  max-width: 49rem;
+  margin: 0.55rem 0 0;
+}
+.panel {
+  background: var(--paper);
+  border: 1px solid #e1e5e7;
+  border-radius: 1rem;
+  padding: clamp(1.1rem, 2.2vw, 2rem);
+}
+.eyebrow {
+  font-size: 0.8rem;
+  color: #21644e;
+  font-weight: 600;
+}
+/* Sección: controles comunes y estados de foco */
+.btn {
+  font-weight: 550;
+  border-radius: 0.65rem;
+  --bs-btn-padding-x: 1.05rem;
+  --bs-btn-padding-y: 0.62rem;
+}
+.btn-primary {
+  --bs-btn-color: white;
+  --bs-btn-bg: var(--ink);
+  --bs-btn-border-color: var(--ink);
+  --bs-btn-hover-bg: #26354a;
+  --bs-btn-hover-border-color: #26354a;
+  --bs-btn-active-bg: #1c293b;
+  --bs-btn-active-border-color: #1c293b;
+  --bs-btn-disabled-bg: #56606f;
+  --bs-btn-disabled-border-color: #56606f;
+}
+.btn-outline-secondary {
+  --bs-btn-color: #354153;
+  --bs-btn-border-color: var(--line);
+  --bs-btn-hover-bg: #eef1f2;
+  --bs-btn-hover-color: var(--ink);
+  --bs-btn-hover-border-color: #98a4af;
+}
+.btn-link {
+  --bs-btn-color: #126448;
+  --bs-btn-hover-color: #0a5037;
+}
+.form-control,
+.form-select {
+  border-color: var(--line);
+  border-radius: 0.6rem;
+  min-height: 2.8rem;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: #138665;
+  box-shadow: 0 0 0 0.19rem #10b98123;
+}
+.alert {
+  border-radius: 0.75rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
 }

@@ -1,0 +1,261 @@
+<!-- Sección: encabezado del portafolio -->
+<header class="page-head">
+  <div>
+    <h1>{{ publicoId() === null ? 'Mis proyectos' : 'Portafolio de proyectos' }}</h1>
+    <p>
+      {{
+        publicoId() === null
+          ? 'Reúne tus trabajos universitarios y elige cuáles compartir.'
+          : 'Proyectos compartidos por el estudiante.'
+      }}
+    </p>
+  </div>
+  @if (publicoId() === null && !editorAbierto() && pagina()) {
+    <button class="btn btn-primary" (click)="abrirEditor()">
+      <i class="bi bi-plus-lg" aria-hidden="true"></i> Nuevo proyecto
+    </button>
+  }
+</header>
+@if (aviso()) {
+  <p class="alert alert-success" role="status">{{ aviso() }}</p>
+}
+@if (errorCarga()) {
+  <p class="alert alert-danger" role="alert">
+    {{ errorCarga() }}
+    <button class="btn btn-link" (click)="cargar(pagina()?.pagina)">Reintentar</button>
+  </p>
+}
+
+<!-- Sección: formulario del proyecto -->
+@if (editorAbierto()) {
+  <section class="panel project-form">
+    <h2>{{ editarId() === null ? 'Nuevo proyecto' : 'Editar proyecto' }}</h2>
+    <form #form="ngForm" (ngSubmit)="guardar(form)">
+      <fieldset [disabled]="enviando()" class="row g-3">
+        <label class="col-12 col-md-8"
+          >Título<input
+            class="form-control"
+            name="titulo"
+            maxlength="160"
+            [(ngModel)]="borrador.titulo"
+            required
+        /></label>
+        <label class="col-12 col-md-4"
+          >Fecha<input
+            class="form-control"
+            type="date"
+            name="fecha"
+            [(ngModel)]="borrador.fecha"
+            required
+        /></label>
+        <label class="col-12 col-md-8"
+          >Curso (opcional)<input
+            class="form-control"
+            name="curso"
+            maxlength="120"
+            [(ngModel)]="borrador.curso"
+        /></label>
+        <label class="col-12"
+          >Descripción<textarea
+            class="form-control"
+            rows="3"
+            name="descripcion"
+            [(ngModel)]="borrador.descripcion"
+            required
+          ></textarea>
+        </label>
+        <!-- Sección: enlaces de evidencia -->
+        <label class="col-12 col-md-6"
+          >Repositorio o archivo
+          <input
+            class="form-control"
+            type="url"
+            name="repo"
+            placeholder="https://"
+            [(ngModel)]="borrador.repoUrl"
+            pattern="https?://.+"
+          />
+          <small>Enlace a GitHub, Drive o un PDF publicado.</small>
+        </label>
+        <label class="col-12 col-md-6"
+          >Demo o presentación
+          <input
+            class="form-control"
+            type="url"
+            name="demo"
+            placeholder="https://"
+            [(ngModel)]="borrador.demoUrl"
+            pattern="https?://.+"
+          />
+          <small>Enlace a Canva o a tu proyecto en línea.</small>
+        </label>
+        <label class="col-12"
+          >Enlace de imagen (opcional)<input
+            class="form-control"
+            type="url"
+            name="imagen"
+            placeholder="https://"
+            [(ngModel)]="borrador.imagenUrl"
+            pattern="https?://.+"
+        /></label>
+        <fieldset class="col-12">
+          <legend>Habilidades utilizadas</legend>
+          <div class="skills">
+            @for (item of catalogos()?.habilidades; track item.id) {
+              <label
+                ><input
+                  type="checkbox"
+                  [checked]="borrador.habilidadIds.includes(item.id)"
+                  (change)="seleccionarHabilidad(item.id, $any($event.target).checked)"
+                />
+                {{ item.nombre }}</label
+              >
+            }
+          </div>
+        </fieldset>
+        <label class="col-12"
+          ><input type="checkbox" name="visible" [(ngModel)]="borrador.visible" /> Mostrar en mi
+          portafolio público</label
+        >
+      </fieldset>
+      @if (errorEdicion()) {
+        <p class="alert alert-danger mt-3" role="alert">{{ errorEdicion() }}</p>
+      }
+      <div class="acciones mt-4">
+        <button type="submit" class="btn btn-primary" [disabled]="enviando()">
+          {{ enviando() ? 'Guardando…' : 'Guardar proyecto' }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          [disabled]="enviando()"
+          (click)="cerrarEditor()"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </section>
+} @else if (cargando()) {
+  <p role="status">Cargando proyectos…</p>
+} @else if (pagina(); as resultado) {
+  <!-- Sección: tarjetas de proyectos -->
+  <div class="cards">
+    @for (proyecto of resultado.items; track proyecto.id) {
+      <article class="panel project">
+        @if (proyecto.imagenUrl) {
+          <img
+            [src]="proyecto.imagenUrl"
+            alt=""
+            loading="lazy"
+            referrerpolicy="no-referrer"
+            class="project-image"
+          />
+        }
+        <div class="project-meta">
+          @if (publicoId() === null) {
+            <span
+              ><i [class]="proyecto.visible ? 'bi bi-globe2' : 'bi bi-lock'" aria-hidden="true"></i>
+              {{ proyecto.visible ? 'Público' : 'Privado' }}</span
+            >
+          }
+          <time [attr.datetime]="proyecto.fecha">{{
+            proyecto.fecha.split('-').reverse().join('/')
+          }}</time>
+        </div>
+        <h2>{{ proyecto.titulo }}</h2>
+        @if (proyecto.curso) {
+          <p class="curso">{{ proyecto.curso }}</p>
+        }
+        <p class="descripcion">{{ proyecto.descripcion }}</p>
+        <div class="tags">
+          @for (id of proyecto.habilidadIds; track id) {
+            <span>{{ habilidad(id) }}</span>
+          }
+        </div>
+        <div class="acciones links">
+          @if (proyecto.repoUrl) {
+            <a [href]="proyecto.repoUrl" target="_blank" rel="noopener noreferrer"
+              >Abrir archivo o repositorio
+              <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i
+            ></a>
+          }
+          @if (proyecto.demoUrl) {
+            <a [href]="proyecto.demoUrl" target="_blank" rel="noopener noreferrer"
+              >Ver presentación <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i
+            ></a>
+          }
+        </div>
+        @if (publicoId() === null) {
+          <div class="project-footer">
+            @if (eliminarId() === proyecto.id) {
+              <p>¿Eliminar «{{ proyecto.titulo }}» de tu portafolio?</p>
+              <div class="acciones">
+                <button
+                  class="btn btn-danger btn-sm"
+                  [disabled]="enviando()"
+                  (click)="eliminar(proyecto)"
+                >
+                  Sí, eliminar
+                </button>
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  [disabled]="enviando()"
+                  (click)="eliminarId.set(null)"
+                >
+                  Cancelar
+                </button>
+              </div>
+            } @else {
+              <div class="acciones">
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  [disabled]="enviando()"
+                  (click)="abrirEditor(proyecto)"
+                >
+                  <i class="bi bi-pencil" aria-hidden="true"></i> Editar
+                </button>
+                <button
+                  class="btn btn-light btn-sm"
+                  [disabled]="enviando()"
+                  (click)="eliminarId.set(proyecto.id)"
+                >
+                  <i class="bi bi-trash3" aria-hidden="true"></i> Eliminar
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </article>
+    } @empty {
+      <div class="panel empty">
+        <i class="bi bi-folder2-open" aria-hidden="true"></i>
+        <h2>
+          {{ publicoId() === null ? 'Aún no tienes proyectos' : 'Aún no hay proyectos públicos' }}
+        </h2>
+        @if (publicoId() === null) {
+          <p>Agrega un trabajo de curso y comparte la evidencia con las empresas.</p>
+        }
+      </div>
+    }
+  </div>
+  @if (resultado.total > resultado.tamano || resultado.pagina > 1) {
+    <nav aria-label="Páginas de proyectos" class="acciones mt-3">
+      <button
+        class="btn btn-outline-secondary"
+        [disabled]="resultado.pagina === 1 || enviando()"
+        (click)="cargar(resultado.pagina - 1)"
+      >
+        Anterior
+      </button>
+      <span>Página {{ resultado.pagina }}</span>
+      <button
+        class="btn btn-outline-secondary"
+        [disabled]="resultado.pagina * resultado.tamano >= resultado.total || enviando()"
+        (click)="cargar(resultado.pagina + 1)"
+      >
+        Siguiente
+      </button>
+    </nav>
+  }
+}

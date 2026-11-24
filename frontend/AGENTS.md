@@ -23,6 +23,8 @@ Ejecuta los comandos desde `frontend/`.
 
 ## Estructura modular
 
+- Escribe cada opción fija del menú lateral, del pie y de las pestañas directamente en el HTML, en el orden en que aparece. Los bloques principales también deben ser fáciles de mover. Usa comentarios cortos en español para ubicarlos, por ejemplo `<!-- Opción: Vacantes -->` en HTML, `/* Sección: Perfil */` en CSS y `// Sección: Proyectos` en TypeScript. Reserva los bucles para datos que cambian, como vacantes o habilidades.
+- Cuida la cuota de APISPERU. Consulta `/api/integraciones/dni/{dni}` o `/api/integraciones/ruc/{ruc}` únicamente cuando la persona pulse **Validar DNI** o **Validar RUC**. Mientras escribe, comprueba solo el formato en el navegador.
 - Coloca cada componente standalone en `src/app/components/<nombre>/` con `<nombre>.ts`, `<nombre>.html`, `<nombre>.css` y `<nombre>.spec.ts`, sin sufijo `.component`. Usa `templateUrl` y `styleUrl`.
 - `navbar`, `footer` y `banner` son componentes compartidos. `auth` reúne el acceso y el registro. `vacantes` reúne el catálogo y el detalle. `perfil-estudiante`, `proyectos` y `mis-postulaciones` cubren el perfil, el portafolio y el seguimiento. `panel-empresa` reúne la gestión de vacantes y candidaturas.
 - Usa `src/app/services/` para el acceso a la API y `src/app/interfaces/` para los contratos tipados. Mantén los archivos de arranque y las rutas de Angular bajo `src/app/`.

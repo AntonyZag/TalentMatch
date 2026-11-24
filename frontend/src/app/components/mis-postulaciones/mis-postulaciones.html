@@ -1,0 +1,131 @@
+<!-- Sección: seguimiento personal -->
+<header class="page-head">
+  <div>
+    <h1>Mis postulaciones</h1>
+    <p>Sigue el estado de tus candidaturas y revisa su historial.</p>
+  </div>
+  <a routerLink="/vacantes" class="btn btn-outline-secondary">Explorar vacantes</a>
+</header>
+@if (error()) {
+  <div class="alert alert-danger" role="alert">
+    {{ error() }}
+    <button class="btn btn-link" (click)="cargar(pagina()?.pagina)">Reintentar</button>
+  </div>
+}
+@if (aviso()) {
+  <p class="alert alert-success" role="status">{{ aviso() }}</p>
+}
+@if (cargando()) {
+  <p role="status">Cargando postulaciones…</p>
+} @else if (pagina(); as resultado) {
+  <div class="lista">
+    @for (item of resultado.items; track item.id) {
+      <article class="panel">
+        <div class="encabezado">
+          <div>
+            <span class="fecha">Postulación del {{ fecha(item.creadoEn) }}</span>
+            <h2>{{ item.vacante }}</h2>
+          </div>
+          <span class="estado" [class.positiva]="item.estado === 'Aceptada'">{{
+            item.estado
+          }}</span>
+        </div>
+        <p class="match">
+          <i class="bi bi-bullseye" aria-hidden="true"></i> {{ item.matchPct }} % de compatibilidad
+          al postular
+        </p>
+        @if (item.mensaje) {
+          <p class="mensaje">{{ item.mensaje }}</p>
+        }
+        <!-- Sección: línea de tiempo -->
+        <details>
+          <summary>Historial de la postulación</summary>
+          <ol class="historial">
+            @for (evento of item.historial; track evento.id) {
+              <li>
+                <strong>{{ nombreEstado(evento.estadoNuevoId) }}</strong>
+                <time [attr.datetime]="evento.fecha">{{ fecha(evento.fecha) }}</time>
+                @if (evento.nota) {
+                  <p>{{ evento.nota }}</p>
+                }
+              </li>
+            } @empty {
+              <li>Todavía no hay cambios registrados.</li>
+            }
+          </ol>
+        </details>
+        <!-- Opción: retirar la postulación -->
+        @if (item.estado !== 'Aceptada' && item.estado !== 'Retirada') {
+          @if (retiroId() === item.id) {
+            <div class="retiro">
+              <h3>¿Retirar tu postulación a esta vacante?</h3>
+              <label
+                >Nota opcional<textarea
+                  class="form-control"
+                  maxlength="4000"
+                  rows="2"
+                  [(ngModel)]="nota"
+                  [disabled]="enviando()"
+                ></textarea>
+              </label>
+              <div class="d-flex gap-2 flex-wrap mt-3">
+                <button
+                  class="btn btn-danger btn-sm"
+                  (click)="retirar(item.id)"
+                  [disabled]="enviando()"
+                >
+                  {{ enviando() ? 'Retirando…' : 'Confirmar retiro' }}
+                </button>
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  (click)="retiroId.set(null)"
+                  [disabled]="enviando()"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          } @else {
+            <button
+              class="btn btn-outline-secondary btn-sm mt-3"
+              [disabled]="enviando()"
+              (click)="iniciarRetiro(item.id)"
+            >
+              Retirar postulación
+            </button>
+          }
+        }
+      </article>
+    } @empty {
+      <div class="panel text-center">
+        <i class="bi bi-send empty-icon" aria-hidden="true"></i>
+        <h2>Aún no tienes postulaciones</h2>
+        <p class="mb-0">
+          Explora las vacantes y postula a la que mejor se ajuste a tus habilidades.
+        </p>
+      </div>
+    }
+  </div>
+  @if (resultado.total > resultado.tamano || resultado.pagina > 1) {
+    <nav
+      aria-label="Páginas de postulaciones"
+      class="d-flex gap-3 align-items-center flex-wrap mt-3"
+    >
+      <button
+        class="btn btn-outline-secondary"
+        [disabled]="resultado.pagina === 1 || enviando()"
+        (click)="cargar(resultado.pagina - 1)"
+      >
+        Anterior
+      </button>
+      <span>Página {{ resultado.pagina }}</span>
+      <button
+        class="btn btn-outline-secondary"
+        [disabled]="resultado.pagina * resultado.tamano >= resultado.total || enviando()"
+        (click)="cargar(resultado.pagina + 1)"
+      >
+        Siguiente
+      </button>
+    </nav>
+  }
+}

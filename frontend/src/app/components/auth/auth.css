@@ -1,0 +1,223 @@
+/* Sección: formulario en la mitad blanca de la tarjeta */
+:host {
+  display: block;
+  min-height: 100%;
+  color: #111827;
+}
+.acceso-contenido {
+  min-height: 100%;
+  min-height: stretch;
+  display: grid;
+  align-items: center;
+  padding: clamp(1.5rem, 4vw, 4.8rem);
+}
+.hoja {
+  width: 100%;
+  max-width: 29rem;
+  margin: auto;
+}
+.hoja h2 {
+  margin: 0 0 1.6rem;
+  font-size: clamp(1.7rem, 2.65vw, 2.8rem);
+  letter-spacing: -0.06em;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #111827;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #087756;
+  outline-offset: 2px;
+}
+
+/* Sección: pestañas y selección de rol */
+.pastilla,
+.tipo {
+  display: flex;
+}
+.pastilla {
+  background: #f0f2f3;
+  border-radius: 1.5rem;
+  padding: 0.3rem;
+  margin-bottom: 1.6rem;
+}
+.pastilla button {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  border-radius: 1.25rem;
+  font-size: 0.94rem;
+  color: #475361;
+  font-weight: 550;
+  min-height: 2.75rem;
+}
+.pastilla .activa {
+  background: #fff;
+  box-shadow: 0 1px 5px #11182720;
+  color: #111827;
+}
+.tipo {
+  gap: 0.6rem;
+  margin: 0.1rem 0 1.2rem;
+}
+.tipo button {
+  background: #fff;
+  color: #354450;
+  border: 1px solid #d1d5db;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 0.7rem;
+  padding: 0.6rem 0.25rem;
+  flex: 1;
+  font-size: 0.9rem;
+}
+.tipo .seleccionado {
+  color: #07573f;
+  background: #e9f9f2;
+  border-color: #209a72;
+  font-weight: 600;
+}
+
+/* Sección: campos, validación y contraseña */
+fieldset {
+  padding: 0;
+  border: 0;
+  margin: 0;
+  min-width: 0;
+}
+label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 550;
+  margin: 1rem 0 0.4rem;
+}
+input,
+select {
+  width: 100%;
+  height: 2.95rem;
+  background: #fbfbfc;
+  border: 1px solid #d1d5db;
+  color: #111827;
+  border-radius: 0.7rem;
+  padding: 0.62rem 0.85rem;
+  min-width: 0;
+}
+input::placeholder {
+  color: #65717c;
+}
+input[readonly] {
+  background: #f1f7f4;
+}
+.campo-icono {
+  position: relative;
+}
+.campo-icono > i {
+  position: absolute;
+  top: 50%;
+  left: 0.95rem;
+  transform: translateY(-50%);
+  color: #536169;
+  pointer-events: none;
+}
+.campo-icono input {
+  padding-left: 2.8rem;
+}
+.con-ojo input {
+  padding-right: 3rem;
+}
+.ojo {
+  position: absolute;
+  right: 0.15rem;
+  top: 0.15rem;
+  bottom: 0.15rem;
+  width: 2.7rem;
+  background: transparent;
+  border: 0;
+  border-radius: 0.5rem;
+  color: #475361;
+}
+.validacion,
+.datos-academicos {
+  display: flex;
+  align-items: end;
+  gap: 0.55rem;
+}
+.validacion input,
+.datos-academicos > div {
+  flex: 1;
+  min-width: 0;
+}
+.datos-academicos .ciclo {
+  flex: 0 1 5rem;
+}
+.validar {
+  white-space: nowrap;
+  border: 1px solid #678477;
+  border-radius: 0.65rem;
+  padding: 0 0.75rem;
+  height: 2.95rem;
+  color: #08563d;
+  background: #ecf8f2;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.enviar {
+  display: block;
+  width: 100%;
+  margin-top: 1.6rem;
+  padding: 0.83rem 1rem;
+  color: #fff;
+  background: #111827;
+  border: 0;
+  border-radius: 0.7rem;
+  font-weight: 600;
+}
+.enviar:hover:enabled {
+  background: #253241;
+}
+.aviso {
+  padding: 0.7rem 0.8rem;
+  border-radius: 0.5rem;
+  font-size: 0.88rem;
+  margin: 0.9rem 0 0;
+}
+.confirmado {
+  color: #08563d;
+  background: #e7f7ed;
+}
+.error {
+  color: #842a30;
+  background: #fff1f1;
+}
+.reintentar {
+  text-decoration: underline;
+  color: inherit;
+  border: 0;
+  background: none;
+}
+@media (max-width: 700px) {
+  .acceso-contenido {
+    padding: 1.6rem clamp(1rem, 5vw, 2rem) 2rem;
+  }
+  .hoja h2 {
+    margin-bottom: 1.05rem;
+  }
+  .pastilla {
+    margin-bottom: 1.2rem;
+  }
+}
