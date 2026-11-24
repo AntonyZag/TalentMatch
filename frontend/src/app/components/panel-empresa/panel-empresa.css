@@ -1,6 +1,6 @@
 :host {
   display: block;
-  color: #111827;
+  color: var(--ink);
 }
 .top-line,
 .actions,
@@ -22,7 +22,7 @@
   margin: 0;
 }
 .section-tabs {
-  border-bottom: 1px solid #d1d5db;
+  border-bottom: 1px solid var(--line);
   gap: 1.5rem;
   margin-bottom: 1.5rem;
 }
@@ -30,7 +30,7 @@
 .quiet {
   background: none;
   border: 0;
-  color: #495465;
+  color: var(--muted);
   padding: 0.75rem 0;
   font: inherit;
 }
@@ -39,8 +39,8 @@
   font-weight: 600;
 }
 .section-tabs button[aria-current] {
-  color: #111827;
-  border-color: #10b981;
+  color: var(--ink);
+  border-color: var(--emerald);
 }
 .subhead {
   margin: 1.25rem 0;
@@ -66,7 +66,7 @@ h5 {
 .subhead span,
 .hiring-card > p,
 .sort-order {
-  color: #526071;
+  color: var(--muted);
   font-size: 0.9rem;
 }
 .card-list {
@@ -91,15 +91,15 @@ h5 {
   place-items: center;
   width: 2.6rem;
   height: 2.6rem;
-  background: #eaf8f2;
-  color: #075f49;
+  background: var(--accent-soft);
+  color: var(--accent-text);
   border-radius: 0.7rem;
 }
 .tag,
 .pills li {
   display: inline-block;
-  color: #265347;
-  background: #edf6f1;
+  color: var(--accent-text);
+  background: var(--accent-soft);
   border-radius: 1rem;
   padding: 0.25rem 0.65rem;
   font-size: 0.8rem;
@@ -133,8 +133,8 @@ label {
 .requirements,
 .candidate-detail,
 .inline-editor {
-  background: #f8faf9;
-  border: 1px solid #e0e5e2;
+  background: var(--input);
+  border: 1px solid var(--divider);
   border-radius: 0.75rem;
   padding: 1rem;
 }
@@ -142,7 +142,7 @@ label {
   margin: 0 0 1.25rem;
 }
 .facts dt {
-  color: #556374;
+  color: var(--muted);
   font-weight: 500;
   font-size: 0.8rem;
 }
@@ -157,7 +157,7 @@ label {
   margin: 0;
 }
 .skill-list li {
-  border-top: 1px solid #d7dfdc;
+  border-top: 1px solid var(--divider);
   padding: 0.4rem 0;
 }
 .check {
@@ -168,7 +168,7 @@ label {
   margin: 0.8rem 0;
 }
 .quiet {
-  color: #086348;
+  color: var(--accent-text);
   text-decoration: underline;
   text-underline-offset: 0.2rem;
 }
@@ -194,16 +194,16 @@ label {
   flex-wrap: wrap;
 }
 .project {
-  border-left: 2px solid #10b981;
+  border-left: 2px solid var(--emerald);
   padding: 0.5rem 0.8rem;
   overflow-wrap: anywhere;
 }
 .project a {
-  color: #086348;
+  color: var(--accent-text);
   font-weight: 550;
 }
 .match {
-  color: #086348;
+  color: var(--accent-text);
   text-align: right;
   display: grid;
 }

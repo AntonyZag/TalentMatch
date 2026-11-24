@@ -17,12 +17,14 @@ import { CatalogosService } from '../../services/catalogos';
 import { errorApi } from '../../services/error-api';
 import { RegistroService } from '../../services/registro';
 import { SesionService } from '../../services/sesion';
+import { Tema } from '../tema/tema';
 
 type Modo = 'login' | 'registro';
 type TipoRegistro = 'ESTUDIANTE' | 'EMPRESA';
 
 @Component({
   selector: 'app-auth',
+  imports: [Tema],
   templateUrl: './auth.html',
   styleUrl: './auth.css',
 })

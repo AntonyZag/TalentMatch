@@ -9,7 +9,7 @@
   display: flex;
   gap: 1rem;
   align-items: center;
-  border-bottom: 1px solid #d1d5db;
+  border-bottom: 1px solid var(--line);
   padding-bottom: 1.25rem;
   margin-bottom: 1.5rem;
 }
@@ -20,8 +20,8 @@
   height: 3.5rem;
   flex: none;
   border-radius: 1rem;
-  background: #e8f8f1;
-  color: #086746;
+  background: var(--accent-soft);
+  color: var(--accent-text);
   font-weight: 700;
   font-size: 1.25rem;
 }
@@ -30,7 +30,7 @@ h2 {
   font-weight: 650;
 }
 .verified {
-  color: #086746;
+  color: var(--accent-text);
   font-size: 0.88rem;
 }
 form fieldset {
@@ -50,7 +50,7 @@ label select {
   margin-top: 0.35rem;
 }
 .ng-submitted .ng-invalid {
-  border-color: #b42318;
+  border-color: var(--error-text);
 }
 /* Sección: lista editable de habilidades */
 .skill-editor {
@@ -63,7 +63,7 @@ label select {
   margin: 1rem 0;
 }
 .skill-list li {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--divider);
   padding: 0.8rem 0;
   display: flex;
   align-items: center;

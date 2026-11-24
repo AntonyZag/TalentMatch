@@ -4,10 +4,10 @@ footer {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  border-top: 1px solid #e2e5e8;
+  border-top: 1px solid var(--divider);
   padding: 1rem clamp(1.25rem, 3.8vw, 3.75rem);
   font-size: 0.85rem;
-  color: #606974;
+  color: var(--muted);
 }
 footer span {
   font-weight: 600;
