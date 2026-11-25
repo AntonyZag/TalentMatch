@@ -26,7 +26,7 @@
 }
 .project-meta {
   justify-content: space-between;
-  color: #4b5563;
+  color: var(--muted);
   font-size: 0.83rem;
   margin-bottom: 1rem;
 }
@@ -36,7 +36,7 @@ h2 {
   overflow-wrap: anywhere;
 }
 .curso {
-  color: #53616c;
+  color: var(--muted);
   font-size: 0.9rem;
 }
 .descripcion {
@@ -47,8 +47,8 @@ h2 {
   font-size: 0.82rem;
   padding: 0.25rem 0.65rem;
   border-radius: 2rem;
-  color: #116045;
-  background: #e8f8f1;
+  color: var(--accent-text);
+  background: var(--accent-soft);
 }
 .links {
   margin-top: auto;
@@ -56,13 +56,13 @@ h2 {
 }
 .links a {
   font-size: 0.88rem;
-  color: #155941;
+  color: var(--accent-text);
   font-weight: 600;
 }
 .project-footer {
   margin-top: 1rem;
   padding-top: 0.85rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--divider);
 }
 .empty {
   text-align: center;
@@ -70,7 +70,7 @@ h2 {
 }
 .empty > i {
   font-size: 2rem;
-  color: #10815f;
+  color: var(--accent-text);
 }
 /* Sección: formulario de proyectos */
 .project-form {
@@ -87,7 +87,7 @@ h2 {
   margin-top: 0.4rem;
 }
 .project-form small {
-  color: #5d6571;
+  color: var(--muted);
 }
 legend {
   font-size: 1rem;
@@ -100,13 +100,13 @@ legend {
 }
 .skills label {
   padding: 0.35rem 0.65rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--line);
   border-radius: 0.5rem;
   font-size: 0.9rem;
 }
 input[type='checkbox'] {
-  accent-color: #087752;
+  accent-color: var(--accent-border);
 }
 .ng-submitted .ng-invalid {
-  border-color: #b42318;
+  border-color: var(--error-text);
 }

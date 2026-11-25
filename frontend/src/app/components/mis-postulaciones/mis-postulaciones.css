@@ -18,21 +18,21 @@ h2 {
 .fecha,
 time {
   font-size: 0.85rem;
-  color: #56616d;
+  color: var(--muted);
 }
 .estado {
   border-radius: 2rem;
-  background: #f2f4f6;
-  color: #374151;
+  background: var(--surface-soft);
+  color: var(--ink);
   padding: 0.3rem 0.8rem;
   font-size: 0.88rem;
 }
 .positiva,
 .match {
-  color: #066848;
+  color: var(--accent-text);
 }
 .positiva {
-  background: #e1f8ed;
+  background: var(--accent-soft);
 }
 .mensaje,
 .historial p {
@@ -40,7 +40,7 @@ time {
   overflow-wrap: anywhere;
 }
 details {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--divider);
   padding-top: 1rem;
 }
 summary {
@@ -49,7 +49,7 @@ summary {
 }
 .historial {
   list-style: none;
-  border-left: 2px solid #a6e5d0;
+  border-left: 2px solid var(--accent-border);
   padding: 0 0 0 1.2rem;
   margin: 1rem 0.6rem 0.25rem;
 }
@@ -65,7 +65,7 @@ summary {
   width: 0.55rem;
   height: 0.55rem;
   border-radius: 50%;
-  background: #10b981;
+  background: var(--emerald);
 }
 time {
   display: block;
@@ -82,5 +82,5 @@ time {
 }
 .empty-icon {
   font-size: 2rem;
-  color: #087752;
+  color: var(--accent-text);
 }

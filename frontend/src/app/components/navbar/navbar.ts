@@ -4,10 +4,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
 import { SesionService } from '../../services/sesion';
 import { Footer } from '../footer/footer';
+import { Tema } from '../tema/tema';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, Footer],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, Footer, Tema],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
   host: { '(document:keydown.escape)': 'cerrarMenu()' },

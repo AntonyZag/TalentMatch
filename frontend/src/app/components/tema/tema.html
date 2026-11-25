@@ -1,0 +1,9 @@
+<!-- Opción: Alternar modo claro y oscuro -->
+<button
+  type="button"
+  [attr.aria-label]="etiqueta()"
+  [title]="etiqueta()"
+  (click)="temas.alternar()"
+>
+  <i class="bi" [class.bi-moon-stars]="!oscuro()" [class.bi-sun]="oscuro()" aria-hidden="true"></i>
+</button>

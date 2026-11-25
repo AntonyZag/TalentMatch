@@ -1,5 +1,7 @@
 import {
   ApplicationConfig,
+  inject,
+  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
@@ -9,6 +11,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 
 import { routes } from './app.routes';
 import { jwtInterceptor } from './interceptors/jwt';
+import { TemaService } from './services/tema';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,5 +20,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })),
     provideClientHydration(),
     provideHttpClient(withInterceptors([jwtInterceptor])),
+    provideAppInitializer(() => {
+      inject(TemaService);
+    }),
   ],
 };

@@ -1,0 +1,21 @@
+/* Opción: selector de tema */
+:host {
+  display: inline-flex;
+}
+
+button {
+  display: grid;
+  place-items: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  padding: 0;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+}
+
+button:hover {
+  color: var(--ink);
+  background: var(--surface-soft);
+}
