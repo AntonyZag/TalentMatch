@@ -1,0 +1,47 @@
+name: Frontend CI y despliegue
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: render-frontend-main
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24.21.0'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci --include=dev
+
+      - name: Compilar para producción
+        run: npm run build
+
+      - name: Solicitar el despliegue del frontend en Render
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.HOOK_RENDER_FRONTEND }}
+        run: |
+          : "${RENDER_DEPLOY_HOOK:?Falta configurar HOOK_RENDER_FRONTEND}"
+          curl -fsS -X POST --max-time 30 --output /dev/null "${RENDER_DEPLOY_HOOK}&ref=${GITHUB_SHA}"
