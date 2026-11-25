@@ -1,0 +1,16 @@
+# Configuración local y credenciales
+**/.env
+**/.env.*
+
+# Entornos, metadatos y cachés locales
+**/.venv
+**/.git
+**/__pycache__
+**/*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Archivos que el servidor no usa al arrancar
+tests/
+sql/
